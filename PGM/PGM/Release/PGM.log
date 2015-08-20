@@ -1,0 +1,24 @@
+﻿2015/08/20 18:43:40 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\Jester\Documents\VC\PGM\PGM\PGM\PGM.vcxproj" (Build ターゲット)。
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"Release\PGM.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt WizardDlg.cpp
+         WizardDlg.cpp
+       ResourceCompile:
+         C:\Program Files\Windows Kits\8.1\bin\x86\rc.exe /D NDEBUG /D _UNICODE /D UNICODE /l"0x0411" /IRelease\ /nologo /fo"Release\PGM.res" PGM.rc 
+       Link:
+         C:\Program Files\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jester\Documents\VC\PGM\PGM\Release\PGM.exe" /INCREMENTAL:NO /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"C:\Program Files\Microsoft Visual Studio 14.0\VC\Include\Manifest\dpiaware.manifest" /Debug /PDB:"C:\Users\Jester\Documents\VC\PGM\PGM\Release\PGM.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jester\Documents\VC\PGM\PGM\Release\PGM.lib" /MACHINE:X86 /SAFESEH Release\PGM.res
+         Release\WizardDlg.obj
+         Release\MainFrm.obj
+         Release\PGM.obj
+         Release\PGMDoc.obj
+         Release\PGMView.obj
+         Release\stdafx.obj
+         コード生成しています。
+         All 339 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         コード生成が終了しました。
+         PGM.vcxproj -> C:\Users\Jester\Documents\VC\PGM\PGM\Release\PGM.exe
+     1>プロジェクト "C:\Users\Jester\Documents\VC\PGM\PGM\PGM\PGM.vcxproj" (Build ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:19.43
