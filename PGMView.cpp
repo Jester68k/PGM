@@ -100,8 +100,8 @@ void CPGMView::OnDraw(CDC* pDC)
 		DrawPlayfield();
 		DrawMovingBlock();
 		str.Format(_T("%10d"), score);
-		pDC->TextOutW(600, 100, _T("SCORE"));
-		pDC->TextOutW(600, 116, str);
+		pDC->TextOut(600, 100, _T("SCORE"));
+		pDC->TextOut(600, 116, str);
 		switch (pDoc->block_type) {
 		case BLOCK_TYPE_ROTATE:
 			for (i = 0; i<pDoc->next_num; i++)
@@ -213,7 +213,8 @@ void CPGMView::OnGamePlay()
 	for (y = 0; y<MAX_HEIGHT; y++)
 		for (x = 0; x<MAX_WIDTH; x++)
 			playfield[y][x] = 0;
-	counter = 0;
+	drop_counter = 0;
+	base_points = 10;
 	pat = 0;
 	mode = MODE_PLAY;
 	playfield_sx = (rect.right - pDoc->pf_width * 16) / 2;
@@ -230,15 +231,18 @@ void CPGMView::OnTimer(UINT nIDEvent)
 	CPGMDoc* pDoc = GetDocument();
 
 	// TODO: この位置にメッセージ ハンドラ用のコードを追加するかまたはデフォルトの処理を呼び出してください
-	if (++counter>10) {
-		counter = 0;
+	if (++drop_counter>10) {
+		drop_counter = 0;
 		++y;
 		if (CheckDropBlock()) {
 			--y;
 			DropBlock();
+			base_points = 10;
 			if (pDoc->drop_flag)
-				while (EraseBlocks())
+				while (EraseBlocks()) {
+					base_points *= 2;
 					InvalidateRect(NULL, FALSE);
+				}
 			else {
 				EraseBlocks();
 			}
@@ -298,7 +302,7 @@ void CPGMView::NewBlock()
 		KillTimer(0);
 		GetClientRect(&rect);
 		rect.top = rect.bottom / 2;
-		pDC->DrawTextW(_T("GAME OVER"), &rect, DT_CENTER | DT_VCENTER);
+		pDC->DrawText(_T("GAME OVER"), &rect, DT_CENTER | DT_VCENTER);
 		mode = MODE_GAMEOVER;
 	}
 }
@@ -373,7 +377,7 @@ void CPGMView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				else
 					EraseBlocks();
 				NewBlock();
-				counter = 0;
+				drop_counter = 0;
 			}
 			break;
 		case VK_SPACE:
@@ -544,22 +548,26 @@ void CPGMView::CopyBlocks(int pat)
 BOOL CPGMView::EraseBlocks()
 {
 	CPGMDoc* pDoc = GetDocument();
-	int flag = 0, bx, by, bx2, by2, count, line_count, sx, sy;
+	int flag = 0, bx, by, bx2, by2, blk_count, line_count, sx, sy;
 	BOOL rensa_flag = FALSE;
+
+	for (by = 0; by < pDoc->pf_height; by++)
+		for (bx = 0; bx < pDoc->pf_width; bx++)
+			erasing_playfield[by][bx] = 0;
 
 	switch (pDoc->shoumetsu_jouken) {
 	case SHOUMETSU_YOKOLINE:
 		line_count = 0;
 		for (by = 0; by<pDoc->pf_height; by++) {
-			count = 0;
+			blk_count = 0;
 			for (bx = 0; bx<pDoc->pf_width; bx++) {
 				if (playfield[by][bx])
-					++count;
+					++blk_count;
 			}
-			if (count == pDoc->pf_width) {
+			if (blk_count == pDoc->pf_width) {
 				++line_count;
 				for (bx = 0; bx<pDoc->pf_width; bx++)
-					playfield[by][bx] = -1;
+					erasing_playfield[by][bx] = 1;
 			}
 		}
 		if (line_count)
@@ -569,166 +577,166 @@ BOOL CPGMView::EraseBlocks()
 		// 一直線・横
 		if (pDoc->coloryoko) {
 			for (by = 0; by<pDoc->pf_height; by++) {
-				count = 1;
 				sx = 0;
-				for (bx = 1; bx<pDoc->pf_width; bx++) {
-					if (playfield[by][bx] != 0 && playfield[by][bx - 1] == playfield[by][bx]) {
-						if (count == 1) {
-							count = 2;
+				blk_count = 1;
+				for (bx = 1; bx < pDoc->pf_width; bx++) {
+					if (playfield[by][bx] !=0 && playfield[by][bx - 1] == playfield[by][bx]) {
+						if (blk_count == 1) {
+							blk_count = 2;
 							sx = bx - 1;
 						}
 						else
-							count++;
+							blk_count++;
 					}
 					else {
-						if (count >= pDoc->shoumetsu_num) {
+						if (blk_count >= pDoc->shoumetsu_num) {
 							for (bx2 = sx; bx2<bx; bx2++)
-								playfield[by][bx2] = -1;
+								erasing_playfield[by][bx2] = 1;
 						}
-						count = 1;
+						blk_count = 1;
 					}
 				}
-				if (count >= pDoc->shoumetsu_num) {
+				if (blk_count >= pDoc->shoumetsu_num) {
 					for (bx2 = sx; bx2<bx; bx2++)
-						playfield[by][bx2] = -1;
+						erasing_playfield[by][bx2] = 1;
 				}
 			}
 		}
 		// 一直線・縦
 		if (pDoc->colortate) {
 			for (bx = 0; bx<pDoc->pf_width; bx++) {
-				count = 1;
+				blk_count = 1;
 				sy = 0;
 				for (by = 1; by<pDoc->pf_height - 1; by++) {
 					if (playfield[by][bx] != 0 && playfield[by - 1][bx] == playfield[by][bx]) {
-						if (count == 1) {
-							count = 2;
+						if (blk_count == 1) {
+							blk_count = 2;
 							sy = by - 1;
 						}
 						else
-							count++;
+							blk_count++;
 					}
 					else {
-						if (count >= pDoc->shoumetsu_num) {
+						if (blk_count >= pDoc->shoumetsu_num) {
 							for (by2 = sy; by2<by; by2++)
-								playfield[by2][bx] = -1;
+								erasing_playfield[by2][bx] = 1;
 						}
-						count = 1;
+						blk_count = 1;
 					}
 				}
-				if (count >= pDoc->shoumetsu_num) {
+				if (blk_count >= pDoc->shoumetsu_num) {
 					for (by2 = sy; by2<by; by2++)
-						playfield[by2][bx] = -1;
+						erasing_playfield[by2][bx] = 1;
 				}
 			}
 		}
 		if (pDoc->colornaname) {
 			//　右下方向
 			for (by = 0; by <= pDoc->pf_height - 1 - 1; by++) {
-				count = 1;
+				blk_count = 1;
 				sx = 0;
 				sy = by;
 				for (bx2 = 1, by2 = by + 1; bx2 <= pDoc->pf_width - 1; bx2++, by2++) {
 					if (playfield[by2][bx2] != 0 && playfield[by2 - 1][bx2 - 1] == playfield[by2][bx2]) {
-						if (count == 0) {
-							count = 2;
+						if (blk_count == 0) {
+							blk_count = 2;
 							sx = bx - 1;
 							sy = by - 1;
 						}
 						else
-							count++;
+							blk_count++;
 					}
 					else {
-						if (count >= pDoc->shoumetsu_num) {
+						if (blk_count >= pDoc->shoumetsu_num) {
 							for (; sx <= bx2; sx++, sy++)
-								playfield[sy][sx] = -1;
+								erasing_playfield[sy][sx] = 1;
 						}
-						count = 1;
+						blk_count = 1;
 					}
-					if (count >= pDoc->shoumetsu_num) {
+					if (blk_count >= pDoc->shoumetsu_num) {
 						for (; sx <= bx2; sx++, sy++)
-							playfield[sy][sx] = -1;
+							erasing_playfield[sy][sx] = 1;
 					}
 				}
 			}
 			for (bx = 1; bx <= pDoc->pf_width - 1 - 1; bx++) {
-				count = 1;
+				blk_count = 1;
 				sx = bx;
 				sy = 0;
 				for (bx2 = bx + 1, by2 = 1; by2 <= pDoc->pf_height - 1; bx2++, by2++) {
 					if (playfield[by2][bx2] != 0 && playfield[by2 - 1][bx2 - 1] == playfield[by2][bx2]) {
-						if (count == 0) {
-							count = 1;
+						if (blk_count == 0) {
+							blk_count = 1;
 							sx = bx - 1;
 							sy = by - 1;
 						}
 						else
-							count++;
+							blk_count++;
 					}
 					else {
-						if (count >= pDoc->shoumetsu_num) {
+						if (blk_count >= pDoc->shoumetsu_num) {
 							for (; sx <= bx2; sx++, sy++)
-								playfield[sy][sx] = -1;
+								erasing_playfield[sy][sx] = 1;
 						}
-						count = 1;
+						blk_count = 1;
 					}
 				}
-				if (count >= pDoc->shoumetsu_num)
+				if (blk_count >= pDoc->shoumetsu_num)
 					for (; sx <= bx2; sx++, sy++)
-						playfield[sy][sx] = -1;
+						erasing_playfield[sy][sx] = -1;
 			}
 			// 右上方向
 			for (by = pDoc->pf_height - 1; by>0; by--) {
-				count = 1;
+				blk_count = 1;
 				sx = 0;
 				sy = by;
 				for (bx2 = 1, by2 = by - 1; bx2 <= pDoc->pf_width - 1 - 1; bx2++, by2--) {
 					if (playfield[by2][bx2] != 0 && playfield[by2 + 1][bx2 - 1] == playfield[by2][bx2]) {
-						if (count == 1) {
-							count = 2;
+						if (blk_count == 1) {
+							blk_count = 2;
 							sx = bx2 - 1;
 							sy = by2 + 1;
 						}
 						else
-							count++;
+							blk_count++;
 					}
 					else {
-						if (count >= pDoc->shoumetsu_num) {
+						if (blk_count >= pDoc->shoumetsu_num) {
 							for (; sx <= bx2; sx++, sy--)
-								playfield[sy][sx] = -1;
+								erasing_playfield[sy][sx] = 1;
 						}
-						count = 1;
+						blk_count = 1;
 					}
 				}
-				if (count >= pDoc->shoumetsu_num)
+				if (blk_count >= pDoc->shoumetsu_num)
 					for (; sx <= bx2; sx++, sy--)
-						playfield[by2][bx2] = -1;
+						erasing_playfield[by2][bx2] = 1;
 			}
 			for (bx = 1, by = pDoc->pf_height - 1; bx <= pDoc->pf_width - 1 - 1; bx++) {
-				count = 1;
+				blk_count = 1;
 				sx = bx;
 				sy = 0;
 				for (bx2 = bx + 1, by2 = pDoc->pf_height - 1; bx2 <= pDoc->pf_width - 1 - 1; bx2++, by2--) {
 					if (playfield[by2][bx2] != 0 && playfield[by2 + 1][bx2 - 1] == playfield[by2][bx2]) {
-						if (count == 0) {
-							count = 2;
+						if (blk_count == 0) {
+							blk_count = 2;
 							sx = bx2 - 1;
 							sy = by2 + 1;
 						}
 						else
-							count++;
+							blk_count++;
 					}
 					else {
-						if (count >= pDoc->shoumetsu_num) {
+						if (blk_count >= pDoc->shoumetsu_num) {
 							for (; sx <= bx2; sx++, sy--)
-								playfield[sy][sx] = -1;
+								erasing_playfield[sy][sx] = 1;
 						}
-						count = 1;
+						blk_count = 1;
 					}
 				}
-				if (count >= pDoc->shoumetsu_num) {
+				if (blk_count >= pDoc->shoumetsu_num) {
 					for (; sx <= bx2; sx++, sy--)
-						playfield[sy][sx] = -1;
+						erasing_playfield[sy][sx] = 1;
 				}
 			}
 		}
@@ -747,7 +755,7 @@ BOOL CPGMView::EraseBlocks()
 							for (by = 0; by<pDoc->pf_height; by++)
 								for (bx = 0; bx<pDoc->pf_width; bx++)
 									if (cPlayfield[by][bx])
-										playfield[by][bx] = -1;
+										erasing_playfield[by][bx] = 1;
 						}
 					}
 				}
@@ -755,19 +763,15 @@ BOOL CPGMView::EraseBlocks()
 		break;
 	}
 	// ブロックの消去処理
-	for (bx = 0; bx<pDoc->pf_width; bx++) {
-		for (by2 = by = pDoc->pf_height - 1; by2 >= 0; by--, by2--) {
-			while (playfield[by2][bx] == -1) {
-				by2--;
+	for (by = 0; by<pDoc->pf_height; by++) {
+		for (bx = 0;  bx<pDoc->pf_width - 1; bx++) {
+			if(erasing_playfield[by][bx]) {
+				playfield[by][bx] = 0;
 				rensa_flag = TRUE;
 				if (pDoc->shoumetsu_jouken != SHOUMETSU_YOKOLINE)
-					score += 10;
+					score += base_points;
 			}
-			playfield[by][bx] = playfield[by2][bx];
 		}
-		if (by2 != by)
-			for (; by >= 0; by--)
-				playfield[by][bx] = 0;
 	}
 	// 固定されたブロックの落下処理
 	if (pDoc->drop_flag) {

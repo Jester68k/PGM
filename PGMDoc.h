@@ -37,8 +37,8 @@ public:
 	BOOL	colornaname;
 	BOOL	colortate;
 	BOOL	coloryoko;
-	UINT	shoumetsu_num;
-	UINT	shoumetsu_jouken;
+	UINT	shoumetsu_num;		// 消滅するブロックの個数（縦・横・斜めなど）
+	UINT	shoumetsu_jouken;	// 消滅条件
 	UINT	pattern_num;
 	BOOL	blockrandom;
 	UINT	blockcolornum;

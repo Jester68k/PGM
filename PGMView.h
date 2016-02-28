@@ -30,7 +30,9 @@ protected:
 // 実装
 public:
 	int playfield[32][32];	// プレイフィールドの配列・最大サイズを用意
-	int playfield_sx, playfield_sy, x, y, pat, rotate, counter, mode, current_color;
+	int erasing_playfield[32][32];
+	int playfield_sx, playfield_sy, x, y, pat, rotate, drop_counter, mode, current_color;
+	int base_points;
 	int cPlayfield[MAX_HEIGHT][MAX_WIDTH], rinsetsu_count;
 	int score, next[MAX_NEXT], next_block[MAX_NEXT][MAX_HEIGHT][MAX_WIDTH];
 	CAsyncSocket socket;
