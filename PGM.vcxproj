@@ -122,6 +122,11 @@
   <ItemGroup>
     <None Include="res\PGM.rc2" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\PGM.ico" />
+    <Image Include="res\PGMDoc.ico" />
+    <Image Include="res\Toolbar.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -17,7 +17,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 日本語 (日本) resources
+// Japanese (Japan) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
@@ -70,7 +70,9 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\PGM.ico"
+
 IDR_PGMTYPE             ICON                    "res\\PGMDoc.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -78,6 +80,7 @@ IDR_PGMTYPE             ICON                    "res\\PGMDoc.ico"
 //
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -240,8 +243,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,3,0,0
- PRODUCTVERSION 0,3,0,0
+ FILEVERSION 0,3,1,0
+ PRODUCTVERSION 0,3,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -258,12 +261,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Jester"
             VALUE "FileDescription", "PGM"
-            VALUE "FileVersion", "0.3.0.0"
+            VALUE "FileVersion", "0.3.1.0"
             VALUE "InternalName", "PGM.exe"
             VALUE "LegalCopyright", "Copyleft"
             VALUE "OriginalFilename", "PGM.exe"
             VALUE "ProductName", "Puzzle Game Maker"
-            VALUE "ProductVersion", "0.3.0.0"
+            VALUE "ProductVersion", "0.3.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -426,7 +429,7 @@ BEGIN
     AFX_IDS_PREVIEW_CLOSE   "印刷プレビュー モードの終わり\nプレビューのキャンセル"
 END
 
-#endif    // 日本語 (日本) resources
+#endif    // Japanese (Japan) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
