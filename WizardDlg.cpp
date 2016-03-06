@@ -53,7 +53,7 @@ void CWizardDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_COLORTATE, m_colortate);
 	DDX_Check(pDX, IDC_COLORYOKO, m_coloryoko);
 	DDX_Text(pDX, IDC_SHOUMETSU_NUM, m_shoumetsu_num);
-	DDV_MinMaxUInt(pDX, m_shoumetsu_num, 2, 32);
+	DDV_MinMaxUInt(pDX, m_shoumetsu_num, 2, 20);
 	DDX_Text(pDX, IDC_PATTERN_NUM, m_pattern_num);
 	DDV_MinMaxUInt(pDX, m_pattern_num, 1, 16);
 	DDX_Text(pDX, IDC_BLOCKCOLORNUM, m_blockcolornum);
