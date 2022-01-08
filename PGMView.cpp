@@ -100,8 +100,8 @@ void CPGMView::OnDraw(CDC* pDC)
 		DrawPlayfield();
 		DrawMovingBlock();
 		str.Format(_T("%10d"), score);
-		pDC->TextOut(600, 100, _T("SCORE"));
-		pDC->TextOut(600, 116, str);
+		pDC->TextOut(700, 100, _T("SCORE"));
+		pDC->TextOut(700, 116, str);
 		switch (pDoc->block_type) {
 		case BLOCK_TYPE_ROTATE:
 			for (i = 0; i<pDoc->next_num; i++)

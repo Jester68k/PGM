@@ -102,11 +102,49 @@ void CPGMDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
+		ar << pf_width;
+		ar << pf_height;
+		ar << block_type;
+		ar << pattern_size;
+		ar << shoumetsu_num;
+		shoumetsu_jouken = wizard_dlg.m_shoumetsu_jouken = SHOUMETSU_LINE;	// 横一列揃い
+		colornaname = wizard_dlg.m_colornaname = TRUE;
+		colortate = wizard_dlg.m_colortate = TRUE;
+		coloryoko = wizard_dlg.m_coloryoko = TRUE;
+		pattern_num = wizard_dlg.m_pattern_num = 1;
+		blockrandom = wizard_dlg.m_blockrandom = TRUE;
+		blockcolornum = wizard_dlg.m_blockcolornum = 7;
+		drop_flag = wizard_dlg.m_drop_flag = TRUE;
+		next_num = wizard_dlg.m_nextnum = 3;
 		// TODO: 格納するコードをここに追加してください。
+		for (num = 0; num < 16; num++)
+			for (rotate = 0; rotate < 4; rotate++)
+				for (y = 0; y < 16; y++)
+					for (x = 0; x < 16; x++)
+						block[num][rotate][y][x] = 0;
 	}
 	else
 	{
 		// TODO: 読み込むコードをここに追加してください。
+		pf_width = wizard_dlg.m_pfwidth = 10;
+		pf_height = wizard_dlg.m_pfheight = 20;
+		block_type = wizard_dlg.m_blocktype = 1;			// 落下ブロックの変化タイプ：循環（縦）
+		pattern_size = wizard_dlg.m_patternsize = 3;		// 横１個
+		shoumetsu_num = wizard_dlg.m_shoumetsu_num = 3;		// ３個以上
+		shoumetsu_jouken = wizard_dlg.m_shoumetsu_jouken = SHOUMETSU_LINE;	// 横一列揃い
+		colornaname = wizard_dlg.m_colornaname = TRUE;
+		colortate = wizard_dlg.m_colortate = TRUE;
+		coloryoko = wizard_dlg.m_coloryoko = TRUE;
+		pattern_num = wizard_dlg.m_pattern_num = 1;
+		blockrandom = wizard_dlg.m_blockrandom = TRUE;
+		blockcolornum = wizard_dlg.m_blockcolornum = 7;
+		drop_flag = wizard_dlg.m_drop_flag = TRUE;
+		next_num = wizard_dlg.m_nextnum = 3;
+		for (num = 0; num < 16; num++)
+			for (rotate = 0; rotate < 4; rotate++)
+				for (y = 0; y < 16; y++)
+					for (x = 0; x < 16; x++)
+						block[num][rotate][y][x] = 0;
 	}
 }
 
