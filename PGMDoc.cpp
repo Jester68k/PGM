@@ -67,7 +67,7 @@ BOOL CPGMDoc::OnNewDocument()
 	color_naname_flag = wizard_dlg.m_color_naname_flag = TRUE;
 	num_patterns = wizard_dlg.m_num_patterns = 1;
 	block_random_flag = wizard_dlg.m_block_random_flag = TRUE;
-	num_block_colors = wizard_dlg.m_num_colors = 7;
+	num_colors = wizard_dlg.m_num_colors = 7;
 	drop_flag = wizard_dlg.m_drop_flag = TRUE;
 	num_next = wizard_dlg.m_num_next = 3;
 
@@ -83,7 +83,7 @@ BOOL CPGMDoc::OnNewDocument()
 		color_naname_flag = wizard_dlg.m_color_naname_flag;
 		num_patterns = wizard_dlg.m_num_patterns;
 		block_random_flag = wizard_dlg.m_block_random_flag;
-		num_block_colors = wizard_dlg.m_num_colors;
+		num_colors = wizard_dlg.m_num_colors;
 		drop_flag = wizard_dlg.m_drop_flag;
 		num_next = wizard_dlg.m_num_next;
 	}
@@ -112,7 +112,7 @@ void CPGMDoc::Serialize(CArchive& ar)
 		ar << color_tate_flag << color_yoko_flag << color_naname_flag;
 		ar << num_patterns;
 		ar << block_random_flag;
-		ar << num_block_colors;
+		ar << num_colors;
 		ar << drop_flag;
 		ar << num_next;
 		// TODO: 格納するコードをここに追加してください。
@@ -130,10 +130,10 @@ void CPGMDoc::Serialize(CArchive& ar)
 		ar >> pattern_size;
 		ar >> num_erase;
 		ar >> erase_jouken;
-		ar >> color_tate_flag << color_yoko_flag << color_naname_flag;
+		ar >> color_tate_flag >> color_yoko_flag >> color_naname_flag;
 		ar >> num_patterns;
 		ar >> block_random_flag;
-		ar >> num_block_colors;
+		ar >> num_colors;
 		ar >> drop_flag;
 		ar >> num_next;
 		// TODO: 格納するコードをここに追加してください。

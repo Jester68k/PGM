@@ -2,6 +2,7 @@
 // Microsoft Visual C++ で生成されたインクルード ファイル。
 // PGM.rc で使用
 //
+#define ID_TOOL_OPTION                  1
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDP_SOCKETS_INIT_FAILED         104
@@ -37,6 +38,7 @@
 #define IDC_NUM_NEXT_SPIN               1039
 #define ID_VIEW_PROPERTY                32771
 #define ID_GAME_PLAY                    32772
+#define ID_VIEW_OPTION                  32772
 #define ID_GAME_STOP                    32773
 #define ID_EDIT_GENERATE                32774
 
@@ -45,7 +47,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32771
+#define _APS_NEXT_COMMAND_VALUE         32775
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

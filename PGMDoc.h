@@ -42,7 +42,7 @@ public:
 	UINT	erase_jouken;		// Á–ÅğŒ
 	UINT	num_patterns;
 	BOOL	block_random_flag;
-	UINT	num_block_colors;
+	UINT	num_colors;
 	UINT	num_next;
 
 	virtual ~CPGMDoc();

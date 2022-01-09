@@ -142,10 +142,14 @@ BEGIN
     END
     POPUP "ゲーム(&G)"
     BEGIN
-        MENUITEM "プレイ(&P)",                     ID_GAME_PLAY
+        MENUITEM "プレイ(&P)\tEnter",              ID_GAME_PLAY
         MENUITEM "中断する(&S)",                    ID_GAME_STOP
     END
-    POPUP "ﾍﾙﾌﾟ(&H)"
+    POPUP "ツール(&T)"
+    BEGIN
+        MENUITEM "オプション(&O)",                   ID_TOOL_OPTION
+    END
+    POPUP "ヘルプ(&H)"
     BEGIN
         MENUITEM "Puzzle Game Makerのバージョン情報(&A)...", ID_APP_ABOUT
     END
@@ -159,20 +163,20 @@ END
 
 IDR_MAINFRAME ACCELERATORS
 BEGIN
-    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
-    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
-    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
-    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
-    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
-    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
-    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
-    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
-    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
-    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
-    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
-    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
-    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
-    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
 END
 
 
@@ -217,11 +221,11 @@ BEGIN
     CONTROL         "横一列",IDC_YOKOLINE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,141,57,37,10
     CONTROL         "直線揃い",IDC_CHOKUSEN,"Button",BS_AUTORADIOBUTTON,141,74,43,10
     CONTROL         "隣接",IDC_RINSETSU,"Button",BS_AUTORADIOBUTTON,141,91,30,10
-    GROUPBOX        "", IDC_STATIC, 130, 43, 92, 123, WS_GROUP
+    GROUPBOX        "",IDC_STATIC,130,43,92,123,WS_GROUP
     CONTROL         "色縦方向",IDC_COLORTATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,141,115,43,10
     CONTROL         "色横方向",IDC_COLORYOKO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,141,130,43,10
     CONTROL         "色斜め方向",IDC_COLORNANAME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,141,146,50,10
-    LTEXT           "ブロック・パターンの数", IDC_STATIC, 17, 172, 66, 8
+    LTEXT           "ブロック・パターンの数",IDC_STATIC,17,172,66,8
     EDITTEXT        IDC_NUM_PATTERNS,22,188,30,14,ES_RIGHT | ES_NUMBER
     CONTROL         "Spin1",IDC_NUM_PATTERNS_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS,52,188,10,14
     LTEXT           "NEXTの表示数",IDC_STATIC,114,184,45,8
@@ -438,6 +442,19 @@ END
 STRINGTABLE
 BEGIN
     AFX_IDS_PREVIEW_CLOSE   "印刷プレビュー モードの終わり\nプレビューのキャンセル"
+END
+
+STRINGTABLE
+BEGIN
+    ID_VIEW_PROPERTY        "このゲームのプロパティ"
+    ID_GAME_PLAY            "このゲームをプレイします"
+    ID_GAME_STOP            "ゲームを中断します"
+    ID_EDIT_GENERATE        "一番上のパターンから回転パターンを生成します"
+END
+
+STRINGTABLE
+BEGIN
+    ID_TOOL_OPTION          "このツールの設定"
 END
 
 #endif    // 日本語 (日本) resources

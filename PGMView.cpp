@@ -83,7 +83,7 @@ void CPGMView::OnDraw(CDC* pDC)
 			playfield_sy = 16;
 			DrawBlock(pDC, 0, 0, current_color);
 			playfield_sy = 16 * 3;
-			for (bx = 0; bx <= pDoc->num_block_colors; bx++)
+			for (bx = 0; bx <= pDoc->num_colors; bx++)
 				DrawBlock(pDC, bx, 0, bx);
 			playfield_sy = 16 * 5;
 			for (pat = 0; pat<pDoc->num_patterns; pat++)
@@ -108,6 +108,9 @@ void CPGMView::OnDraw(CDC* pDC)
 				for (by = 0; by<pDoc->pattern_size; by++)
 					for (bx = 0; bx<pDoc->pattern_size; bx++)
 						DrawBlock(pDC, (pDoc->pf_width + bx + 2), i*(pDoc->pattern_size + 1) + by, pDoc->block[i][0][by][bx]);
+			for (i = 0; i < pDoc->num_next; i++)
+				for (by = 0; by < pDoc->pattern_size; by++)
+					DrawBlock(pDC, (pDoc->pf_width + 2), i * (pDoc->pattern_size + 1) + by, next_block[i][by][0]);
 			break;
 		case BLOCK_TYPE_CIRCULATE:
 			for (i = 0; i<pDoc->num_next; i++)
@@ -182,7 +185,7 @@ void CPGMView::OnViewProperty()
 	wizard_dlg.m_color_naname_flag = pDoc->color_naname_flag;
 	wizard_dlg.m_num_patterns = pDoc->num_patterns;
 	wizard_dlg.m_block_random_flag = pDoc->block_random_flag;
-	wizard_dlg.m_num_colors = pDoc->num_block_colors;
+	wizard_dlg.m_num_colors = pDoc->num_colors;
 	wizard_dlg.m_drop_flag = pDoc->drop_flag;
 	if (wizard_dlg.DoModal() == IDOK) {
 		pDoc->pf_width = wizard_dlg.m_pfwidth;
@@ -196,10 +199,10 @@ void CPGMView::OnViewProperty()
 		pDoc->color_yoko_flag = wizard_dlg.m_color_yoko_flag;
 		pDoc->num_patterns = wizard_dlg.m_num_patterns;
 		pDoc->block_random_flag = wizard_dlg.m_block_random_flag;
-		pDoc->num_block_colors = wizard_dlg.m_num_colors;
+		pDoc->num_colors = wizard_dlg.m_num_colors;
 		pDoc->drop_flag = wizard_dlg.m_drop_flag;
 	}
-
+	InvalidateRect(NULL, TRUE);
 }
 
 void CPGMView::OnGamePlay()
@@ -278,7 +281,7 @@ void CPGMView::NewBlock()
 			for (bx = 0; bx<pDoc->pattern_size; bx++)
 				if (pDoc->block_random_flag)
 					if (pDoc->block[pat][0][by][bx])
-						pDoc->block[pat][0][by][bx] = rand() % pDoc->num_block_colors + 1;
+						pDoc->block[pat][0][by][bx] = rand() % pDoc->num_colors + 1;
 		if (pDoc->block_random_flag)
 			CopyBlocks(pat);
 		x = (pDoc->pf_width - pDoc->pattern_size) / 2;
@@ -290,7 +293,7 @@ void CPGMView::NewBlock()
 			for (by = 0; by<pDoc->pattern_size; by++)
 				next_block[i][by][0] = next_block[i + 1][by][0];
 		for (by = 0; by<pDoc->pattern_size; by++)
-			next_block[pDoc->num_next - 1][by][0] = rand() % pDoc->num_block_colors + 1;
+			next_block[pDoc->num_next - 1][by][0] = rand() % pDoc->num_colors + 1;
 		x = (pDoc->pf_width - 1) / 2;
 		break;
 	}
@@ -506,9 +509,9 @@ void CPGMView::OnLButtonDown(UINT nFlags, CPoint point)
 			if (pat >= 0 && pat<16 && rotate >= 0 && rotate<4 && bx >= 0 && bx<pDoc->pattern_size && by >= 0 && by<pDoc->pattern_size)
 				pDoc->block[pat][rotate][by][bx] = current_color;
 			else
-				if (point.x >= 16 && point.x<16 + 16 * (pDoc->num_block_colors + 1) && point.y >= 16 * 3 && point.y<16 * 4) {
+				if (point.x >= 16 && point.x<16 + 16 * (pDoc->num_colors + 1) && point.y >= 16 * 3 && point.y<16 * 4) {
 					color = (point.x - 16) / 16;
-					if (color >= 0 && color <= pDoc->num_block_colors)
+					if (color >= 0 && color <= pDoc->num_colors)
 						current_color = color;
 				}
 			break;
