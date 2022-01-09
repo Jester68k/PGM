@@ -29,20 +29,21 @@ public:
 
 // 実装
 public:
-	int block[16][4][16][16];	// ブロックの配列・最大サイズを用意
-	int topTen[10];
-	int pf_width, pf_height, block_type, drop_flag;
-	int speed[MAX_LEVEL];
-	UINT	pattern_size;
-	BOOL	colornaname;
-	BOOL	colortate;
-	BOOL	coloryoko;
-	UINT	shoumetsu_num;		// 消滅するブロックの個数（縦・横・斜めなど）
-	UINT	shoumetsu_jouken;	// 消滅条件
-	UINT	pattern_num;
-	BOOL	blockrandom;
-	UINT	blockcolornum;
-	UINT	next_num;
+	int		block[16][4][16][16];	// ブロックの配列・最大サイズを用意
+	int		topTen[10];
+	int		pf_width, pf_height, block_type;
+	UINT	drop_flag;
+	int		speed[MAX_LEVEL];
+	UINT	pattern_size;		// パターンのサイズ
+	BOOL	color_tate_flag;			// 色縦フラグ
+	BOOL	color_yoko_flag;			// 色横フラグ
+	BOOL	color_naname_flag;		// 色斜めフラグ
+	UINT	num_erase;			// 消滅するブロックの個数（縦・横・斜めなど）
+	UINT	erase_jouken;		// 消滅条件
+	UINT	num_patterns;
+	BOOL	block_random_flag;
+	UINT	num_block_colors;
+	UINT	num_next;
 
 	virtual ~CPGMDoc();
 #ifdef _DEBUG

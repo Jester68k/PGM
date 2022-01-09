@@ -22,9 +22,9 @@ const int MODE_PLAY = 1;
 const int MODE_GAMEOVER = 2;
 const int WINDOW_W = 640;
 const int WINDOW_H = 480;
-const int SHOUMETSU_YOKOLINE = 0;
-const int SHOUMETSU_LINE = 1;
-const int SHOUMETSU_RINSETSU = 2;
+const int ERASE_YOKO1LINE = 0;
+const int ERASE_LINE = 1;
+const int ERASE_RINSETSU = 2;
 
 // CPGMApp:
 // このクラスの実装については、PGM.cpp を参照してください。

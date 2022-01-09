@@ -58,33 +58,34 @@ BOOL CPGMDoc::OnNewDocument()
 					block[num][rotate][y][x] = 0;
 	pf_width = wizard_dlg.m_pfwidth = 10;
 	pf_height = wizard_dlg.m_pfheight = 20;
-	block_type = wizard_dlg.m_blocktype = 1;			// 落下ブロックの変化タイプ：循環（縦）
-	pattern_size = wizard_dlg.m_patternsize = 3;		// 横１個
-	shoumetsu_num = wizard_dlg.m_shoumetsu_num = 3;		// ３個以上
-	shoumetsu_jouken = wizard_dlg.m_shoumetsu_jouken = SHOUMETSU_LINE;	// 横一列揃い
-	colornaname = wizard_dlg.m_colornaname = TRUE;
-	colortate = wizard_dlg.m_colortate = TRUE;
-	coloryoko = wizard_dlg.m_coloryoko = TRUE;
-	pattern_num = wizard_dlg.m_pattern_num = 1;
-	blockrandom = wizard_dlg.m_blockrandom = TRUE;
-	blockcolornum = wizard_dlg.m_blockcolornum = 7;
+	block_type = wizard_dlg.m_block_type = 1;			// 落下ブロックの変化タイプ：循環（縦）
+	pattern_size = wizard_dlg.m_pattern_size = 3;		// 横１個
+	num_erase = wizard_dlg.m_num_erase = 3;		// ３個以上
+	erase_jouken = wizard_dlg.m_erase_jouken = ERASE_LINE;	// 一列揃い
+	color_tate_flag = wizard_dlg.m_color_tate_flag = TRUE;
+	color_yoko_flag = wizard_dlg.m_color_yoko_flag = TRUE;
+	color_naname_flag = wizard_dlg.m_color_naname_flag = TRUE;
+	num_patterns = wizard_dlg.m_num_patterns = 1;
+	block_random_flag = wizard_dlg.m_block_random_flag = TRUE;
+	num_block_colors = wizard_dlg.m_num_colors = 7;
 	drop_flag = wizard_dlg.m_drop_flag = TRUE;
-	next_num = wizard_dlg.m_nextnum = 3;
+	num_next = wizard_dlg.m_num_next = 3;
+
 	if (wizard_dlg.DoModal() == IDOK) {
 		pf_width = wizard_dlg.m_pfwidth;
 		pf_height = wizard_dlg.m_pfheight;
-		block_type = wizard_dlg.m_blocktype;
-		pattern_size = wizard_dlg.m_patternsize;
-		shoumetsu_num = wizard_dlg.m_shoumetsu_num;
-		shoumetsu_jouken = wizard_dlg.m_shoumetsu_jouken;
-		colornaname = wizard_dlg.m_colornaname;
-		colortate = wizard_dlg.m_colortate;
-		coloryoko = wizard_dlg.m_coloryoko;
-		pattern_num = wizard_dlg.m_pattern_num;
-		blockrandom = wizard_dlg.m_blockrandom;
-		blockcolornum = wizard_dlg.m_blockcolornum;
+		block_type = wizard_dlg.m_block_type;
+		pattern_size = wizard_dlg.m_pattern_size;
+		num_erase = wizard_dlg.m_num_erase;
+		erase_jouken = wizard_dlg.m_erase_jouken;
+		color_tate_flag = wizard_dlg.m_color_tate_flag;
+		color_yoko_flag = wizard_dlg.m_color_yoko_flag;
+		color_naname_flag = wizard_dlg.m_color_naname_flag;
+		num_patterns = wizard_dlg.m_num_patterns;
+		block_random_flag = wizard_dlg.m_block_random_flag;
+		num_block_colors = wizard_dlg.m_num_colors;
 		drop_flag = wizard_dlg.m_drop_flag;
-		next_num = wizard_dlg.m_nextnum;
+		num_next = wizard_dlg.m_num_next;
 	}
 
 	static int first = 0;
@@ -106,45 +107,41 @@ void CPGMDoc::Serialize(CArchive& ar)
 		ar << pf_height;
 		ar << block_type;
 		ar << pattern_size;
-		ar << shoumetsu_num;
-		shoumetsu_jouken = wizard_dlg.m_shoumetsu_jouken = SHOUMETSU_LINE;	// 横一列揃い
-		colornaname = wizard_dlg.m_colornaname = TRUE;
-		colortate = wizard_dlg.m_colortate = TRUE;
-		coloryoko = wizard_dlg.m_coloryoko = TRUE;
-		pattern_num = wizard_dlg.m_pattern_num = 1;
-		blockrandom = wizard_dlg.m_blockrandom = TRUE;
-		blockcolornum = wizard_dlg.m_blockcolornum = 7;
-		drop_flag = wizard_dlg.m_drop_flag = TRUE;
-		next_num = wizard_dlg.m_nextnum = 3;
+		ar << num_erase;
+		ar << erase_jouken;
+		ar << color_tate_flag << color_yoko_flag << color_naname_flag;
+		ar << num_patterns;
+		ar << block_random_flag;
+		ar << num_block_colors;
+		ar << drop_flag;
+		ar << num_next;
 		// TODO: 格納するコードをここに追加してください。
-		for (num = 0; num < 16; num++)
-			for (rotate = 0; rotate < 4; rotate++)
-				for (y = 0; y < 16; y++)
-					for (x = 0; x < 16; x++)
-						block[num][rotate][y][x] = 0;
+		for (int num = 0; num < 16; num++)
+			for (int rotate = 0; rotate < 4; rotate++)
+				for (int y = 0; y < 16; y++)
+					for (int x = 0; x < 16; x++)
+						ar << block[num][rotate][y][x];
 	}
 	else
 	{
-		// TODO: 読み込むコードをここに追加してください。
-		pf_width = wizard_dlg.m_pfwidth = 10;
-		pf_height = wizard_dlg.m_pfheight = 20;
-		block_type = wizard_dlg.m_blocktype = 1;			// 落下ブロックの変化タイプ：循環（縦）
-		pattern_size = wizard_dlg.m_patternsize = 3;		// 横１個
-		shoumetsu_num = wizard_dlg.m_shoumetsu_num = 3;		// ３個以上
-		shoumetsu_jouken = wizard_dlg.m_shoumetsu_jouken = SHOUMETSU_LINE;	// 横一列揃い
-		colornaname = wizard_dlg.m_colornaname = TRUE;
-		colortate = wizard_dlg.m_colortate = TRUE;
-		coloryoko = wizard_dlg.m_coloryoko = TRUE;
-		pattern_num = wizard_dlg.m_pattern_num = 1;
-		blockrandom = wizard_dlg.m_blockrandom = TRUE;
-		blockcolornum = wizard_dlg.m_blockcolornum = 7;
-		drop_flag = wizard_dlg.m_drop_flag = TRUE;
-		next_num = wizard_dlg.m_nextnum = 3;
-		for (num = 0; num < 16; num++)
-			for (rotate = 0; rotate < 4; rotate++)
-				for (y = 0; y < 16; y++)
-					for (x = 0; x < 16; x++)
-						block[num][rotate][y][x] = 0;
+		ar >> pf_width;
+		ar >> pf_height;
+		ar >> block_type;
+		ar >> pattern_size;
+		ar >> num_erase;
+		ar >> erase_jouken;
+		ar >> color_tate_flag << color_yoko_flag << color_naname_flag;
+		ar >> num_patterns;
+		ar >> block_random_flag;
+		ar >> num_block_colors;
+		ar >> drop_flag;
+		ar >> num_next;
+		// TODO: 格納するコードをここに追加してください。
+		for (int num = 0; num < 16; num++)
+			for (int rotate = 0; rotate < 4; rotate++)
+				for (int y = 0; y < 16; y++)
+					for (int x = 0; x < 16; x++)
+						ar >> block[num][rotate][y][x];
 	}
 }
 

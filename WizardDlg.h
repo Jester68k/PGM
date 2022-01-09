@@ -19,32 +19,30 @@ public:
 // ダイアログ データ
 	//{{AFX_DATA(CWizardDlg)
 	enum { IDD = IDD_WIZARD };
-	CSpinButtonCtrl	m_nextnumspin;
+	CSpinButtonCtrl	m_numnextspin;
 	CSpinButtonCtrl	m_patternsizespin;
-	CSpinButtonCtrl	m_patternwidthspin;
-	CSpinButtonCtrl	m_patternheightspin;
-	CSpinButtonCtrl	m_blockcolornumspin;
-	CSpinButtonCtrl	m_patternspin;
-	CSpinButtonCtrl	m_shoumetsuspin;
+	CSpinButtonCtrl	m_numcolorsspin;
+	CSpinButtonCtrl	m_numpatternsspin;
+	CSpinButtonCtrl	m_numerasespin;
 	CSpinButtonCtrl	m_pfwidthspin;
 	CSpinButtonCtrl	m_pfheightspin;
 	UINT	m_pfheight;
 	UINT	m_pfwidth;
-	int	m_blocktype;
-	BOOL	m_colornaname;
-	BOOL	m_colortate;
-	BOOL	m_coloryoko;
-	UINT	m_shoumetsu_num;
-	UINT	m_pattern_num;
-	UINT	m_blockcolornum;
-	UINT	m_blockshapenum;
-	UINT	m_patternheight;
-	UINT	m_patternwidth;
-	BOOL	m_blockrandom;
-	UINT	m_patternsize;
+	int		m_block_type;
+	BOOL	m_color_tate_flag;
+	BOOL	m_color_yoko_flag;
+	BOOL	m_color_naname_flag;
+	int		m_erase_jouken;
+	UINT	m_num_erase;
+	UINT	m_num_colors;
+	UINT	m_num_patterns;
+	UINT	m_pf_height;
+	UINT	m_pf_width;
+	BOOL	m_block_random_flag;
+	UINT	m_pattern_size;
 	BOOL	m_drop_flag;
 	int		m_shoumetsu_jouken;
-	UINT	m_nextnum;
+	UINT	m_num_next;
 	//}}AFX_DATA
 
 
@@ -63,6 +61,8 @@ protected:
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnEnChangePatternSize();
 };
 
 //{{AFX_INSERT_LOCATION}}
