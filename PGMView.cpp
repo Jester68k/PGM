@@ -104,18 +104,15 @@ void CPGMView::OnDraw(CDC* pDC)
 		pDC->TextOut(700, 116, str);
 		switch (pDoc->block_type) {
 		case BLOCK_TYPE_ROTATE:
-			for (i = 0; i<pDoc->num_next; i++)
-				for (by = 0; by<pDoc->pattern_size; by++)
-					for (bx = 0; bx<pDoc->pattern_size; bx++)
-						DrawBlock(pDC, (pDoc->pf_width + bx + 2), i*(pDoc->pattern_size + 1) + by, pDoc->block[i][0][by][bx]);
 			for (i = 0; i < pDoc->num_next; i++)
 				for (by = 0; by < pDoc->pattern_size; by++)
-					DrawBlock(pDC, (pDoc->pf_width + 2), i * (pDoc->pattern_size + 1) + by, next_block[i][by][0]);
+					for (bx = 0; bx < pDoc->pattern_size; bx++)
+						DrawBlock(pDC, pDoc->pf_width + 2 + bx, i * (pDoc->pattern_size + 1) + by, next_block[i][by][bx]);
 			break;
 		case BLOCK_TYPE_CIRCULATE:
 			for (i = 0; i<pDoc->num_next; i++)
 				for (by = 0; by<pDoc->pattern_size; by++)
-					DrawBlock(pDC, (pDoc->pf_width + 2), i*(pDoc->pattern_size + 1) + by, next_block[i][by][0]);
+					DrawBlock(pDC, pDoc->pf_width + 2, i*(pDoc->pattern_size + 1) + by, next_block[i][by][0]);
 			break;
 		}
 		break;
@@ -274,16 +271,26 @@ void CPGMView::NewBlock()
 	switch (pDoc->block_type) {
 	case BLOCK_TYPE_ROTATE:
 		pat = next[0];
-		for (i = 0; i<pDoc->num_next - 1; i++)
-			next[i] = next[i + 1];
+		for (i = 0; i < pDoc->num_next - 1; i++) {
+			for (i = 0; i < pDoc->num_next - 1; i++) {
+				next[i] = next[i + 1];
+				for (by = 0; by < pDoc->pattern_size; by++)
+					for (bx = 0; bx < pDoc->pattern_size; bx++)
+						next_block[i][by][bx] = next_block[i + 1][by][bx];
+			}
+
+		}
 		next[pDoc->num_next - 1] = rand() % pDoc->num_patterns;
-		for (by = 0; by<pDoc->pattern_size; by++)
-			for (bx = 0; bx<pDoc->pattern_size; bx++)
-				if (pDoc->block_random_flag)
+		if (pDoc->block_random_flag) {
+			for (by = 0; by < pDoc->pattern_size; by++)
+				for (bx = 0; bx < pDoc->pattern_size; bx++)
 					if (pDoc->block[pat][0][by][bx])
 						pDoc->block[pat][0][by][bx] = rand() % pDoc->num_colors + 1;
-		if (pDoc->block_random_flag)
 			CopyBlocks(pat);
+		}
+		for (by = 0; by < pDoc->pattern_size; by++)
+				for (bx = 0; bx < pDoc->pattern_size; bx++)
+					next_block[pDoc->num_next-1][by][bx] = pDoc->block[next[pDoc->num_next-1]][0][by][bx];
 		x = (pDoc->pf_width - pDoc->pattern_size) / 2;
 		break;
 	case BLOCK_TYPE_CIRCULATE:
@@ -551,7 +558,7 @@ void CPGMView::CopyBlocks(int pat)
 BOOL CPGMView::EraseBlocks()
 {
 	CPGMDoc* pDoc = GetDocument();
-	int flag = 0, bx, by, bx2, by2, blk_count, line_count, sx, sy;
+	int flag = 0, bx, by, bx2, by2, blk_count, erase_sy, line_count, sx, sy;
 	BOOL rensa_flag = FALSE;
 
 	for (by = 0; by < pDoc->pf_height; by++)
@@ -560,21 +567,22 @@ BOOL CPGMView::EraseBlocks()
 
 	switch (pDoc->erase_jouken) {
 	case ERASE_YOKO1LINE:
+		erase_sy = -1;
 		line_count = 0;
-		for (by = 0; by<pDoc->pf_height; by++) {
+		for (by = pDoc->pf_height - 1; by >= 0; by--) {
 			blk_count = 0;
-			for (bx = 0; bx<pDoc->pf_width; bx++) {
+			for (bx = 0; bx < pDoc->pf_width; bx++) {
 				if (playfield[by][bx])
 					++blk_count;
 			}
 			if (blk_count == pDoc->pf_width) {
-				++line_count;
-				for (bx = 0; bx<pDoc->pf_width; bx++)
-					erasing_playfield[by][bx] = 1;
+				line_count++;
+				if (line_count == 1)
+					erase_sy = by;
 			}
 		}
 		if (line_count)
-			score += 100 * pow((double)2, (double)line_count - 1);
+			score += base_points * pow((double)2, (double)line_count - 1);
 		break;
 	case ERASE_LINE:
 		// 一直線・縦
@@ -607,11 +615,11 @@ BOOL CPGMView::EraseBlocks()
 		}
 		// 一直線・横
 		if (pDoc->color_yoko_flag) {
-			for (by = 0; by<pDoc->pf_height; by++) {
+			for (by = 0; by < pDoc->pf_height; by++) {
 				sx = 0;
 				blk_count = 1;
 				for (bx = 1; bx < pDoc->pf_width; bx++) {
-					if (playfield[by][bx] !=0 && playfield[by][bx - 1] == playfield[by][bx]) {
+					if (playfield[by][bx] != 0 && playfield[by][bx - 1] == playfield[by][bx]) {
 						if (blk_count == 1) {
 							blk_count = 2;
 							sx = bx - 1;
@@ -621,14 +629,14 @@ BOOL CPGMView::EraseBlocks()
 					}
 					else {
 						if (blk_count >= pDoc->num_erase) {
-							for (bx2 = sx; bx2<bx; bx2++)
+							for (bx2 = sx; bx2 < bx; bx2++)
 								erasing_playfield[by][bx2] = 1;
 						}
 						blk_count = 1;
 					}
 				}
 				if (blk_count >= pDoc->num_erase) {
-					for (bx2 = sx; bx2<bx; bx2++)
+					for (bx2 = sx; bx2 < bx; bx2++)
 						erasing_playfield[by][bx2] = 1;
 				}
 			}
@@ -689,7 +697,7 @@ BOOL CPGMView::EraseBlocks()
 						erasing_playfield[sy][sx] = -1;
 			}
 			// 右上方向
-			for (by = pDoc->pf_height - 1; by>0; by--) {
+			for (by = pDoc->pf_height - 1; by > 0; by--) {
 				blk_count = 1;
 				sx = 0;
 				sy = by;
@@ -745,18 +753,18 @@ BOOL CPGMView::EraseBlocks()
 		}
 		break;
 	case ERASE_RINSETSU:
-		for (by = 0; by<pDoc->pf_height; by++)
-			for (bx = 0; bx<pDoc->pf_width; bx++)
+		for (by = 0; by < pDoc->pf_height; by++)
+			for (bx = 0; bx < pDoc->pf_width; bx++)
 				cPlayfield[by][bx] = 0;
-		for (by = 1; by<pDoc->pf_height - 1; by++)
-			for (bx = 1; bx<pDoc->pf_width - 1; bx++) {
+		for (by = 1; by < pDoc->pf_height - 1; by++)
+			for (bx = 1; bx < pDoc->pf_width - 1; bx++) {
 				if (playfield[by][bx]) {
 					rinsetsu_count = 1;
-					if (playfield[by][bx]>0) {
+					if (playfield[by][bx] > 0) {
 						SearchBlock(bx, by, playfield[by][bx]);
 						if (rinsetsu_count >= pDoc->num_erase) {
-							for (by = 0; by<pDoc->pf_height; by++)
-								for (bx = 0; bx<pDoc->pf_width; bx++)
+							for (by = 0; by < pDoc->pf_height; by++)
+								for (bx = 0; bx < pDoc->pf_width; bx++)
 									if (cPlayfield[by][bx])
 										erasing_playfield[by][bx] = 1;
 						}
@@ -766,21 +774,37 @@ BOOL CPGMView::EraseBlocks()
 		break;
 	}
 	// ブロックの消去処理
-	for (by = 0; by<pDoc->pf_height; by++) {
-		for (bx = 0;  bx<pDoc->pf_width - 1; bx++) {
-			if(erasing_playfield[by][bx]) {
-				playfield[by][bx] = 0;
-				rensa_flag = TRUE;
-				if (pDoc->erase_jouken != ERASE_YOKO1LINE)
-					score += base_points;
+	switch (pDoc->erase_jouken) {
+	case ERASE_YOKO1LINE:
+		if (line_count) {
+			int loop_cnt;
+			for (by = erase_sy, loop_cnt=erase_sy-line_count; loop_cnt; --by, --loop_cnt)
+				for (bx = 0; bx < pDoc->pf_width; bx++)
+					playfield[by][bx] = playfield[by-line_count][bx];
+			for (loop_cnt=line_count; loop_cnt; --by, --loop_cnt)
+				for (bx = 0; bx < pDoc->pf_width; bx++)
+					playfield[by][bx] = 0;
+		}
+		break;
+	default:
+		for (by = 0; by < pDoc->pf_height; by++) {
+			for (bx = 0; bx < pDoc->pf_width; bx++) {
+				if (erasing_playfield[by][bx]) {
+					playfield[by][bx] = 0;
+					rensa_flag = TRUE;
+					if (pDoc->erase_jouken != ERASE_YOKO1LINE)
+						score += base_points;
+				}
 			}
 		}
+		break;
 	}
+
 	// 固定されたブロックの落下処理
 	if (pDoc->drop_flag) {
 		for (bx = 0; bx<pDoc->pf_width; bx++) {
-			for (by2 = by = pDoc->pf_height - 1; by2 >= 0; by--, by2--) {
-				while (by2>0 && playfield[by2][bx] == 0)
+			for (by = by2 = pDoc->pf_height-1; by2 >= 0; by--, by2--) {
+				while (by2>0 && playfield[by2][bx]==0)
 					by2--;
 				playfield[by][bx] = playfield[by2][bx];
 			}
