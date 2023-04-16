@@ -29,8 +29,8 @@ protected:
 
 // 実装
 public:
-	int playfield[32][32];	// プレイフィールドの配列・最大サイズを用意
-	int erasing_playfield[32][32];
+	int playfield[MAX_HEIGHT][MAX_WIDTH];	// プレイフィールドの配列・最大サイズを用意
+	int erasing_playfield[MAX_HEIGHT][MAX_WIDTH];
 	int playfield_sx, playfield_sy, x, y, pat, rotate, drop_counter, mode, current_color;
 	int base_points;
 	int cPlayfield[MAX_HEIGHT][MAX_WIDTH], rinsetsu_count;

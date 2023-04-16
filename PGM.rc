@@ -132,7 +132,7 @@ BEGIN
         MENUITEM "ｺﾋﾟｰ(&C)\tCtrl+C",            ID_EDIT_COPY
         MENUITEM "貼り付け(&P)\tCtrl+V",            ID_EDIT_PASTE
         MENUITEM SEPARATOR
-        MENUITEM "回転パターンの生成",                   ID_EDIT_GENERATE
+        MENUITEM "一番上のパターンから回転パターンを生成",         ID_EDIT_GENERATE
     END
     POPUP "表示(&V)"
     BEGIN
