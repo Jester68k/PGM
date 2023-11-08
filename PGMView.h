@@ -47,7 +47,7 @@ protected:
 // 生成された、メッセージ割り当て関数
 protected:
 	void InitializeBlock();
-	void SearchBlock(int x, int y, int color);
+	void SearchBlock(int x, int y);
 	BOOL EraseBlocks();
 	void CopyBlocks(int pat);
 	void DropBlock();

@@ -754,20 +754,19 @@ BOOL CPGMView::EraseBlocks()
 		break;
 	case ERASE_RINSETSU:
 		for (by = 0; by < pDoc->pf_height; by++)
-			for (bx = 0; bx < pDoc->pf_width; bx++)
-				cPlayfield[by][bx] = 0;
-		for (by = 1; by < pDoc->pf_height - 1; by++)
-			for (bx = 1; bx < pDoc->pf_width - 1; bx++) {
-				if (playfield[by][bx]) {
+			for (bx = 0; bx < pDoc->pf_width; bx++) {
+				if (!erasing_playfield[by][bx] && playfield[by][bx]) { // 消えるブロックは処理する必要がないためこうしている
+					for (by2 = 0; by2 < pDoc->pf_height; by2++)
+						for (bx2 = 0; bx2 < pDoc->pf_width; bx2++)
+							cPlayfield[by2][bx2] = 0;
+					cPlayfield[by][bx] = playfield[by][bx];
 					rinsetsu_count = 1;
-					if (playfield[by][bx] > 0) {
-						SearchBlock(bx, by, playfield[by][bx]);
-						if (rinsetsu_count >= pDoc->num_erase) {
-							for (by = 0; by < pDoc->pf_height; by++)
-								for (bx = 0; bx < pDoc->pf_width; bx++)
-									if (cPlayfield[by][bx])
-										erasing_playfield[by][bx] = 1;
-						}
+					SearchBlock(bx, by);
+					if (rinsetsu_count >= pDoc->num_erase) {
+						for (by2 = 0; by2 < pDoc->pf_height; by2++)
+							for (bx2 = 0; bx2 < pDoc->pf_width; bx2++)
+								if (cPlayfield[by2][bx2])
+									erasing_playfield[by2][bx2] = 1;
 					}
 				}
 			}
@@ -816,68 +815,6 @@ BOOL CPGMView::EraseBlocks()
 	return rensa_flag;
 }
 
-void CPGMView::SearchBlock(int x, int y, int color)
-{
-	CPGMDoc* pDoc = GetDocument();
-
-	if (0 == color || playfield[y][x] != color || 0 == playfield[y][x] || x<0 || x >= pDoc->pf_width || y<0 || y >= pDoc->pf_height)
-		return;
-	if (pDoc->color_tate_flag) {
-		if (y + 1<pDoc->pf_height && playfield[y][x] == playfield[y + 1][x] && cPlayfield[y + 1][x] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y + 1][x] = playfield[y + 1][x];
-			rinsetsu_count++;
-			SearchBlock(x, y + 1, color);
-		}
-		if (y>0 && playfield[y][x] == playfield[y - 1][x] && cPlayfield[y - 1][x] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y - 1][x] = playfield[y - 1][x];
-			rinsetsu_count++;
-			SearchBlock(x, y - 1, color);
-		}
-	}
-	if (pDoc->color_yoko_flag) {
-		if (x + 1<pDoc->pf_width && playfield[y][x] == playfield[y][x + 1] && cPlayfield[y][x + 1] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y][x + 1] = playfield[y][x + 1];
-			rinsetsu_count++;
-			SearchBlock(x + 1, y, color);
-		}
-		if (x>0 && playfield[y][x] == playfield[y][x - 1] && cPlayfield[y][x - 1] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y][x - 1] = playfield[y][x - 1];
-			rinsetsu_count++;
-			SearchBlock(x - 1, y, color);
-		}
-	}
-	if (pDoc->color_naname_flag) {
-		if (y + 1<pDoc->pf_height && x + 1<pDoc->pf_width && playfield[y][x] == playfield[y + 1][x + 1] && cPlayfield[y + 1][x + 1] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y + 1][x + 1] = playfield[y + 1][x + 1];
-			rinsetsu_count++;
-			SearchBlock(x + 1, y + 1, color);
-		}
-		if (y>0 && x + 1<pDoc->pf_width && playfield[y][x] == playfield[y - 1][x + 1] && cPlayfield[y - 1][x + 1] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y - 1][x + 1] = playfield[y - 1][x + 1];
-			rinsetsu_count++;
-			SearchBlock(x + 1, y - 1, color);
-		}
-		if (y - 1<pDoc->pf_height && x>0 && playfield[y][x] == color && playfield[y][x] == playfield[y + 1][x - 1] && cPlayfield[y + 1][x - 1] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y + 1][x - 1] = playfield[y + 1][x - 1];
-			rinsetsu_count++;
-			SearchBlock(x - 1, y + 1, color);
-		}
-		if (y>0 && y<pDoc->pf_height && x>0 && x<pDoc->pf_width && playfield[y - 1][x - 1] == color && cPlayfield[y - 1][x - 1] != color) {
-			color = cPlayfield[y][x] = playfield[y][x];
-			cPlayfield[y - 1][x - 1] = playfield[y - 1][x - 1];
-			rinsetsu_count++;
-			SearchBlock(x - 1, y - 1, color);
-		}
-	}
-}
-
 void CPGMView::InitializeBlock()
 {
 	CPGMDoc* pDoc = GetDocument();
@@ -893,6 +830,64 @@ void CPGMView::InitializeBlock()
 		NewBlock();
 }
 
+void CPGMView::SearchBlock(int x, int y)
+{
+	CPGMDoc* pDoc = GetDocument();
+	int color;
+
+	if (x<0 || x >= pDoc->pf_width || y<0 || y >= pDoc->pf_height)
+		return;
+	color = playfield[y][x];
+	if (0 == color) 
+		return;
+	if (pDoc->color_tate_flag) {
+		if (y + 1<pDoc->pf_height && playfield[y + 1][x] == color && 0==cPlayfield[y+1][x]) {
+			cPlayfield[y+1][x] = color;
+			rinsetsu_count++;
+			SearchBlock(x, y + 1);
+		}
+		if (y - 1 >= 0 && playfield[y - 1][x] == color && 0 == cPlayfield[y - 1][x]) {
+			cPlayfield[y-1][x] = color;
+			rinsetsu_count++;
+			SearchBlock(x, y - 1);
+		}
+	}
+	if (pDoc->color_yoko_flag) {
+		if (x + 1 < pDoc->pf_width && playfield[y][x + 1] == color && 0 == cPlayfield[y][x + 1]) {
+			cPlayfield[y][x + 1] = color;
+			rinsetsu_count++;
+			SearchBlock(x + 1, y);
+		}
+		if (x - 1 >= 0 && playfield[y][x - 1] == color && 0 == cPlayfield[y][x - 1]) {
+			cPlayfield[y][x - 1] = color;
+			rinsetsu_count++;
+			SearchBlock(x - 1, y);
+		}
+	}
+
+	if (pDoc->color_naname_flag) {
+		if (y + 1<pDoc->pf_height && x + 1<pDoc->pf_width && playfield[y + 1][x + 1]==color && 0 == cPlayfield[y + 1][x + 1]) {
+			cPlayfield[y + 1][x + 1] = color;
+			rinsetsu_count++;
+			SearchBlock(x + 1, y + 1);
+		}
+		if (y - 1 >= 0 && x + 1 < pDoc->pf_width && playfield[y - 1][x + 1] == color && 0 == cPlayfield[y - 1][x + 1]) {
+			cPlayfield[y - 1][x + 1] = color;
+			rinsetsu_count++;
+			SearchBlock(x + 1, y - 1);
+		}
+	if (y + 1 < pDoc->pf_height && x - 1 >= 0 && playfield[y + 1][x - 1] == color && 0 == cPlayfield[y + 1][x - 1]) {
+			cPlayfield[y + 1][x - 1] = color;
+			rinsetsu_count++;
+			SearchBlock(x - 1, y + 1);
+		}
+		if (y - 1 >= 0 && x + 1 < pDoc->pf_width && playfield[y - 1][x + 1] == color && 0 == cPlayfield[y - 1][x + 1]) {
+			cPlayfield[y - 1][x + 1] = color;
+			rinsetsu_count++;
+			SearchBlock(x - 1, y - 1);
+		}
+	}
+}
 
 int CPGMView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
